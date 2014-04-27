@@ -11,9 +11,13 @@ class Dungeon extends FlxGroup
 {
   inline static var SIZE = 40;
 
+  //We have to add this one separately to layer it on top
+  public var wallTopTilemap:FlxTilemap;
+
   var dungeonTiles:DungeonTiles;
   var drapedTiles:DrapedTiles;
   var isometricWalls:IsometricWalls;
+  var isometricTops:IsometricTops;
 
   var groundTilemap:FlxTilemap;
   var drapedTilemap:FlxTilemap;
@@ -46,6 +50,13 @@ class Dungeon extends FlxGroup
     wallTilemap.x = groundTilemap.x;
     wallTilemap.y = groundTilemap.y;
     add(wallTilemap);
+
+    isometricTops = new IsometricTops(isometricWalls);
+    wallTopTilemap = new FlxTilemap();
+    wallTopTilemap.loadMap(FlxStringUtil.arrayToCSV(flattenArray(isometricTops.tiles), SIZE),
+                          "assets/images/tiles.png", 32, 32, FlxTilemap.OFF);
+    wallTopTilemap.x = groundTilemap.x;
+    wallTopTilemap.y = groundTilemap.y;
   }
 
   private function flattenArray(array:Array<Array<Int>>):Array<Int> {

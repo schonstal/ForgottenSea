@@ -38,6 +38,8 @@ class PlayState extends FlxState
     player = new Player();
     add(player);
 
+    add(dungeon.wallTopTilemap);
+
     cameraObject = new FlxObject();
     add(cameraObject);
 
