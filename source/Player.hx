@@ -12,15 +12,22 @@ class Player extends FlxSprite
 
   public function new() {
     super();
-    loadGraphic("assets/images/player.png", true, 16, 16);
+    loadGraphic("assets/images/player.png", true, 32, 32);
     setFacingFlip(FlxObject.LEFT, true, false);
     setFacingFlip(FlxObject.RIGHT, false, false);
-    animation.add("walk", [6,7,8], 5, true);
-    animation.add("stand", [7], 5);
+    animation.add("walk", [0], 5, true);
+    animation.add("stand", [0], 5);
+    width = 22;
+    height = 12;
+    offset.x = 4;
+    offset.y = 20;
   }
 
   public override function update():Void {
     processMovement();
+
+    facing = FlxG.mouse.x < x + width/2 ? FlxObject.LEFT : FlxObject.RIGHT;
+
     super.update();
   }
 
@@ -34,11 +41,9 @@ class Player extends FlxSprite
       direction.y = 1;
     }
     if(FlxG.keys.pressed.A) {
-      facing = FlxObject.LEFT;
       direction.x = -1;
     }
     if(FlxG.keys.pressed.D) {
-      facing = FlxObject.RIGHT;
       direction.x = 1;
     }
 

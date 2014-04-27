@@ -44,11 +44,17 @@ class PlayState extends FlxState
     add(cameraObject);
 
     FlxG.camera.follow(cameraObject, FlxCamera.STYLE_LOCKON, new FlxPoint(-player.width/2,-player.height/2), 0);
+
+    FlxG.worldBounds.width = FlxG.worldBounds.height = Dungeon.SIZE * 32;
+    FlxG.worldBounds.x = dungeon.wallTilemap.x;
+    FlxG.worldBounds.y = dungeon.wallTilemap.y;
   }
 
   override public function update():Void {
     cameraObject.x = (FlxG.mouse.x + player.x*3)/4;
     cameraObject.y = (FlxG.mouse.y + player.y*3)/4;
+
     super.update();
+    FlxG.collide(player, dungeon.collisionTilemap);
   }
 }

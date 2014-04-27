@@ -9,10 +9,12 @@ import flixel.tile.FlxTilemap;
 
 class Dungeon extends FlxGroup
 {
-  inline static var SIZE = 40;
+  inline public static var SIZE = 40;
 
   //We have to add this one separately to layer it on top
   public var wallTopTilemap:FlxTilemap;
+  public var wallTilemap:FlxTilemap;
+  public var collisionTilemap:FlxTilemap;
 
   var dungeonTiles:DungeonTiles;
   var drapedTiles:DrapedTiles;
@@ -21,7 +23,6 @@ class Dungeon extends FlxGroup
 
   var groundTilemap:FlxTilemap;
   var drapedTilemap:FlxTilemap;
-  var wallTilemap:FlxTilemap;
 
   public function new() {
     super();
@@ -33,6 +34,21 @@ class Dungeon extends FlxGroup
     groundTilemap.x = -20 * 32;
     groundTilemap.y = -20 * 32;
     add(groundTilemap);
+
+    //Invert the tiles for collision
+    collisionTilemap = new FlxTilemap();
+    var collisionArray:Array<Int> = flattenArray(dungeonTiles.tiles);
+    for (i in 0...collisionArray.length-1) {
+      if(collisionArray[i] > 0) {
+        collisionArray[i] = 0;
+      } else {
+        collisionArray[i] = 1;
+      }
+    }
+    collisionTilemap.loadMap(FlxStringUtil.arrayToCSV(collisionArray, SIZE),
+                          "assets/images/tiles.png", 32, 32, FlxTilemap.OFF);
+    collisionTilemap.x = groundTilemap.x;
+    collisionTilemap.y = groundTilemap.y;
 
     drapedTiles = new DrapedTiles(dungeonTiles);
 
@@ -57,6 +73,9 @@ class Dungeon extends FlxGroup
                           "assets/images/tiles.png", 32, 32, FlxTilemap.OFF);
     wallTopTilemap.x = groundTilemap.x;
     wallTopTilemap.y = groundTilemap.y;
+    
+    collisionTilemap.visible = false;
+    add(collisionTilemap);
   }
 
   private function flattenArray(array:Array<Array<Int>>):Array<Int> {
