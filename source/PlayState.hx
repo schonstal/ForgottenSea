@@ -29,10 +29,8 @@ class PlayState extends FlxState
     var water = new Water();
     add(water);
 
-    dungeon = new Dungeon(20,20);
-    var collisionMap = new FlxTilemap();
-		collisionMap.loadMap(FlxStringUtil.arrayToCSV(dungeon.tiles, 10), "assets/images/tiles.png", 32, 32, FlxTilemap.OFF);
-    add(collisionMap);
+    dungeon = new Dungeon();
+    add(dungeon);
     
     player = new Player();
     add(player);
