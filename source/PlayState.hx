@@ -22,6 +22,8 @@ class PlayState extends FlxState
 
   override public function create():Void {
     super.create();
+    FlxG.debugger.drawDebug = true;
+    FlxG.debugger.visible = true;
 
     var water = new Water();
     water.x = -FlxG.width/2;

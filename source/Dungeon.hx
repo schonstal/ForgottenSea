@@ -14,11 +14,17 @@ class Dungeon extends FlxGroup
 
   public function new() {
     super();
-    dungeonTiles = new DungeonTiles(20,20);
+    dungeonTiles = new DungeonTiles(60,60);
+
+    var flattenedArray:Array<Int> = new Array<Int>(); 
+    for (tileArray in dungeonTiles.tiles) {
+      for (tile in tileArray) {
+        flattenedArray.push(tile);
+      }
+    }
 
     groundTilemap = new FlxTilemap();
-    trace(dungeonTiles.tiles);
-    groundTilemap.loadMap(FlxStringUtil.arrayToCSV(dungeonTiles.tiles[0], 20),
+    groundTilemap.loadMap(FlxStringUtil.arrayToCSV(flattenedArray, 60),
                           "assets/images/tiles.png", 32, 32, FlxTilemap.OFF);
     add(groundTilemap);
   }
