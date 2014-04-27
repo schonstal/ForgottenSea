@@ -9,13 +9,14 @@ class DungeonTiles
 {
   inline static var BRUSH_SIZE = 2;
 
+  public var tiles:Array<Array<Int>>;
+  public var width:Int;
+  public var height:Int;
+
   var position:FlxPoint;
   var direction:FlxVector;
 
-  var width:Int;
-  var height:Int;
-
-  public var tiles:Array<Array<Int>>;
+  var dirty:Bool = false;
 
   public function new(width:Int, height:Int) {
     this.width = width;
@@ -46,10 +47,21 @@ class DungeonTiles
           var localY = Std.int(position.y) + y;
           var localX = Std.int(position.x) + x;
 
-          tiles[localY][localX] = (localY + localX % 2 == 0 ? 1 : 2);
+          if (dirty) {
+            tiles[localY][localX] = FlxRandom.intRanged(3,11);
+          } else {
+            tiles[localY][localX] = ((localY + localX) % 2 == 0 ? 1 : 2);
+          }
         }
       }
       changeDirection();
+      getDirty();
+    }
+  }
+
+  private function getDirty():Void {
+    if (FlxRandom.chanceRoll(5)) {
+      dirty = !dirty;
     }
   }
 

@@ -8,7 +8,7 @@ import flash.display.BlendMode;
 
 class Player extends FlxSprite
 {
-  inline static var SPEED = 400;
+  inline static var SPEED = 100;
 
   public function new() {
     super();
