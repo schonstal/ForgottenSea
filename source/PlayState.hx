@@ -2,16 +2,18 @@ package;
 
 import flixel.addons.effects.FlxWaveSprite;
 import flixel.addons.effects.FlxGlitchSprite;
+
 import flixel.FlxG;
 import flixel.FlxSprite;
 import flixel.FlxState;
 import flixel.FlxObject;
-import flixel.util.FlxRandom;
 import flixel.FlxCamera;
+
+import flixel.util.FlxRandom;
 import flixel.util.FlxPoint;
-import flixel.text.FlxText;
-import flixel.ui.FlxButton;
-import flixel.util.FlxMath;
+import flixel.util.FlxStringUtil;
+
+import flixel.tile.FlxTilemap;
 
 class PlayState extends FlxState
 {
@@ -19,11 +21,18 @@ class PlayState extends FlxState
   private var cameraObject:FlxObject;
   private var water:FlxSprite;
 
+  private var dungeon:Dungeon;
+
   override public function create():Void {
     super.create();
 
     var water = new Water();
     add(water);
+
+    dungeon = new Dungeon(20,20);
+    var collisionMap = new FlxTilemap();
+		collisionMap.loadMap(FlxStringUtil.arrayToCSV(dungeon.tiles, 10), "assets/images/tiles.png", 32, 32, FlxTilemap.OFF);
+    add(collisionMap);
     
     player = new Player();
     add(player);

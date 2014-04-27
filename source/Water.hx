@@ -8,7 +8,7 @@ import flixel.addons.effects.FlxGlitchSprite;
 
 class Water extends FlxSpriteGroup
 {
-  override public function new():Void {
+  public function new():Void {
     super();
 
     var water = new FlxSprite();
