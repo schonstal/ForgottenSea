@@ -46,7 +46,7 @@ class DungeonTiles
           var localY = Std.int(position.y) + y;
           var localX = Std.int(position.x) + x;
 
-          tiles[localY][localX] = 1;//(localY + localX % 2 == 0 ? 1 : 2);
+          tiles[localY][localX] = (localY + localX % 2 == 0 ? 1 : 2);
         }
       }
       changeDirection();
