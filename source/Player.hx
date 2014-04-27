@@ -17,7 +17,6 @@ class Player extends FlxSprite
     setFacingFlip(FlxObject.RIGHT, false, false);
     animation.add("walk", [6,7,8], 5, true);
     animation.add("stand", [7], 5);
-    blend = BlendMode.ADD;
   }
 
   public override function update():Void {
