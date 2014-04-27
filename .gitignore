@@ -4,3 +4,5 @@
 /export/
 /report/
 /assets/data/*.hash
+*.swp
+*.swo
