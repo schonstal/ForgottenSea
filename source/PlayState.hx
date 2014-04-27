@@ -11,9 +11,6 @@ import flixel.FlxCamera;
 
 import flixel.util.FlxRandom;
 import flixel.util.FlxPoint;
-import flixel.util.FlxStringUtil;
-
-import flixel.tile.FlxTilemap;
 
 class PlayState extends FlxState
 {
@@ -27,6 +24,10 @@ class PlayState extends FlxState
     super.create();
 
     var water = new Water();
+    water.x = -FlxG.width/2;
+    water.y = -FlxG.height/2;
+    water.alpha = 0.2;
+    water.scrollFactor.x = water.scrollFactor.y = 0.2;
     add(water);
 
     dungeon = new Dungeon();

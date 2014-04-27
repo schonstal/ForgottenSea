@@ -17,7 +17,8 @@ class Dungeon extends FlxGroup
     dungeonTiles = new DungeonTiles(20,20);
 
     groundTilemap = new FlxTilemap();
-    groundTilemap.loadMap(FlxStringUtil.arrayToCSV(dungeonTiles.tiles, 10),
+    trace(dungeonTiles.tiles);
+    groundTilemap.loadMap(FlxStringUtil.arrayToCSV(dungeonTiles.tiles[0], 20),
                           "assets/images/tiles.png", 32, 32, FlxTilemap.OFF);
     add(groundTilemap);
   }
