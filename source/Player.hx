@@ -16,7 +16,7 @@ class Player extends FlxSprite
     setFacingFlip(FlxObject.LEFT, true, false);
     setFacingFlip(FlxObject.RIGHT, false, false);
     animation.add("walk", [0], 5, true);
-    animation.add("stand", [0], 5);
+    animation.add("idle", [0,0,1,2,3,3], 10);
     width = 22;
     height = 12;
     offset.x = 4;
@@ -53,7 +53,7 @@ class Player extends FlxSprite
       animation.play("walk");
     } else {
       velocity.x = velocity.y = 0;
-      animation.play("stand");
+      animation.play("idle");
     }
   }
 }
