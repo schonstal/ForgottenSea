@@ -23,6 +23,7 @@ class Dungeon extends FlxGroup
 
   var groundTilemap:FlxTilemap;
   var drapedTilemap:FlxTilemap;
+  var drapedWallTilemap:FlxTilemap;
 
   public function new() {
     super();
@@ -50,15 +51,6 @@ class Dungeon extends FlxGroup
     collisionTilemap.x = groundTilemap.x;
     collisionTilemap.y = groundTilemap.y;
 
-    drapedTiles = new DrapedTiles(dungeonTiles);
-
-    drapedTilemap = new FlxTilemap();
-    drapedTilemap.loadMap(FlxStringUtil.arrayToCSV(flattenArray(drapedTiles.tiles), SIZE),
-                          "assets/images/tiles.png", 32, 32, FlxTilemap.OFF);
-    drapedTilemap.x = groundTilemap.x;
-    drapedTilemap.y = groundTilemap.y;
-    add(drapedTilemap);
-
     isometricWalls = new IsometricWalls(dungeonTiles);
     wallTilemap = new FlxTilemap();
     wallTilemap.loadMap(FlxStringUtil.arrayToCSV(flattenArray(isometricWalls.tiles), SIZE),
@@ -66,6 +58,23 @@ class Dungeon extends FlxGroup
     wallTilemap.x = groundTilemap.x;
     wallTilemap.y = groundTilemap.y;
     add(wallTilemap);
+
+    var draperArray:Array<Array<Int>> = new Array<Array<Int>>();
+    for (y in 0...dungeonTiles.tiles.length) {
+      draperArray[y] = new Array<Int>();
+      for (x in 0...dungeonTiles.tiles[0].length) {
+        draperArray[y][x] = ((dungeonTiles.tiles[y][x] + isometricWalls.tiles[y][x]) > 0 ? 1 : 0);
+      }
+    }
+
+    drapedTiles = new DrapedTiles(draperArray);
+
+    drapedTilemap = new FlxTilemap();
+    drapedTilemap.loadMap(FlxStringUtil.arrayToCSV(flattenArray(drapedTiles.tiles), SIZE),
+                          "assets/images/tiles.png", 32, 32, FlxTilemap.OFF);
+    drapedTilemap.x = groundTilemap.x;
+    drapedTilemap.y = groundTilemap.y;
+    add(drapedTilemap);
 
     isometricTops = new IsometricTops(isometricWalls);
     wallTopTilemap = new FlxTilemap();
