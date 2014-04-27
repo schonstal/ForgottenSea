@@ -2,38 +2,28 @@ package;
 
 import flixel.FlxObject;
 import flixel.util.FlxRandom;
-import flixel.util.FlxRect;
+import flixel.util.FlxPoint;
+import flixel.util.FlxVector;
 
 class DungeonTiles
 {
-  inline static var DEPTH = 3; //How far to recurse down the tree
-  inline static var EDGE_TOLERANCE = 0.4; //How close to the edge can we divide? percentage.
-  inline static var MIN_SIZE = 0.6;
-  inline static var MAX_SIZE = 0.8;
+  inline static var BRUSH_SIZE = 2;
 
-  var children:Array<DungeonTiles> = new Array<DungeonTiles>();
-  var depth:Int = 0; //What step we're on
-  var verticalSplit:Bool;
+  var position:FlxPoint;
+  var direction:FlxVector;
 
   var width:Int;
   var height:Int;
 
-  var room:FlxRect;
+  public var tiles:Array<Array<Int>>;
 
-  public var tiles(get,null):Array<Array<Int>>;
-
-  public function new(width:Int, height:Int, depth:Int=0, previousVertical:Bool=false) {
-    this.depth = depth;
+  public function new(width:Int, height:Int) {
     this.width = width;
     this.height = height;
-    verticalSplit = !previousVertical;
+    position = new FlxPoint(width/2, height/2);
+    direction = new FlxVector(1,0);
 
-    if (depth < DEPTH) {
-      generateChildren();
-    } else {
-      generateRoom();
-      generateTiles();
-    }
+    generateTiles();
   }
 
   private function generateTiles():Void {
@@ -41,54 +31,43 @@ class DungeonTiles
     for(y in 0...height) {
       tiles[y] = new Array<Int>();
       for(x in 0...width) {
-        tiles[y][x] = (x >= room.x && x < room.x + room.width &&
-                       y >= room.y && y < room.y + room.height) ?
-                       1 : 0;
+        tiles[y][x] = 0;
       }
     }
-  }
 
-  private function generateRoom():Void {
-    room = new FlxRect();
-    room.width = FlxRandom.intRanged(Std.int(width * MIN_SIZE), Std.int(width * MAX_SIZE));
-    room.height = FlxRandom.intRanged(Std.int(height * MIN_SIZE), Std.int(height * MAX_SIZE));
-    room.x = FlxRandom.intRanged(6, width - Std.int(room.width) - 6);
-    room.y = FlxRandom.intRanged(6, height - Std.int(room.height) - 6);
-  }
+    for(i in 0...400) {
+      position.x += direction.x;
+      position.y += direction.y;
 
-  private function generateChildren():Void {
-    var newWidth = width;
-    var newHeight = height;
+      
+      var localSize = BRUSH_SIZE + (FlxRandom.chanceRoll(5) ? 1 : 0);
+      for(x in 0...localSize) {
+        for(y in 0...localSize) {
+          var localY = Std.int(position.y) + y;
+          var localX = Std.int(position.x) + x;
 
-    if (verticalSplit) {
-      newWidth = FlxRandom.intRanged(Std.int(width * EDGE_TOLERANCE), Std.int(width * (1-EDGE_TOLERANCE)));
-      children[0] = new DungeonTiles(width - newWidth, height, depth+1, verticalSplit);
-    } else {
-      newHeight = FlxRandom.intRanged(Std.int(height * EDGE_TOLERANCE), Std.int(height * (1-EDGE_TOLERANCE)));
-      children[0] = new DungeonTiles(width, height - newHeight, depth+1, verticalSplit);
-    }
-    children[1] = new DungeonTiles(newWidth, newHeight, depth+1, verticalSplit);
-  }
-
-  private function get_tiles():Array<Array<Int>> {
-    if (tiles == null) {
-      tiles = new Array<Array<Int>>();
-      for (tile in children[0].tiles) {
-        tiles.push(tile);
-      }
-      if (!verticalSplit) {
-        for (tile in children[1].tiles) {
-          tiles.push(tile);
-        }
-      } else {
-        for (i in 0...height-1) {
-          for (tile in children[1].tiles[i]) {
-            tiles[i].push(tile);
-          }
+          tiles[localY][localX] = 1;//(localY + localX % 2 == 0 ? 1 : 2);
         }
       }
+      changeDirection();
     }
-    
-    return tiles;
+  }
+
+  private function changeDirection():Void {
+    if (FlxRandom.chanceRoll(40) || outOfBounds()) {
+
+      direction.x = FlxRandom.intRanged(-1,1);
+      direction.y = FlxRandom.intRanged(-1,1);
+    }
+
+    if(outOfBounds())
+      changeDirection();
+  }
+
+  private function outOfBounds():Bool {
+    return position.x + direction.x * (BRUSH_SIZE + 1) + BRUSH_SIZE >= width ||
+           position.x + direction.x * (BRUSH_SIZE + 1) < 0 ||
+           position.y + direction.y * (BRUSH_SIZE + 1) + BRUSH_SIZE >= height ||
+           position.y + direction.y * (BRUSH_SIZE + 1) < 0;
   }
 }
