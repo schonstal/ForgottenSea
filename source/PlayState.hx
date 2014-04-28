@@ -8,9 +8,11 @@ import flixel.FlxSprite;
 import flixel.FlxState;
 import flixel.FlxObject;
 import flixel.FlxCamera;
+import flixel.group.FlxTypedGroup;
 
 import flixel.util.FlxRandom;
 import flixel.util.FlxPoint;
+import flixel.util.FlxSort;
 
 class PlayState extends FlxState
 {
@@ -20,6 +22,9 @@ class PlayState extends FlxState
   private var water:FlxSprite;
 
   private var dungeon:Dungeon;
+
+  private var dungeonObjects:FlxTypedGroup<FlxObject>;
+  private var projectiles:FlxTypedGroup<FlxObject>;
 
   override public function create():Void {
     super.create();
@@ -37,18 +42,21 @@ class PlayState extends FlxState
     dungeon = new Dungeon();
     add(dungeon);
     
-    player = new Player();
-    add(player);
+    reticle = new Reticle();
+
+    dungeonObjects = new FlxTypedGroup<FlxObject>();
+    G.projectiles = new FlxTypedGroup<FlxObject>();
+
+    player = new Player(dungeonObjects, reticle);
+    dungeonObjects.add(player);
+    add(dungeonObjects);
 
     add(dungeon.wallTopTilemap);
 
     cameraObject = new FlxObject();
     add(cameraObject);
 
-    reticle = new Reticle();
     add(reticle);
-
-    add(new Projectile());
 
     FlxG.camera.follow(cameraObject, FlxCamera.STYLE_LOCKON, new FlxPoint(-player.width/2,-player.height/2), 0);
 
@@ -56,15 +64,23 @@ class PlayState extends FlxState
     FlxG.worldBounds.x = dungeon.wallTilemap.x;
     FlxG.worldBounds.y = dungeon.wallTilemap.y;
 
-    //FlxG.sound.play("assets/music/seacave_music1.wav");
-    //FlxG.sound.play("assets/sounds/seacave_ambience1.wav");
+    FlxG.sound.play("assets/music/seacave_music1.wav");
+    FlxG.sound.playMusic("assets/sounds/seacave_ambience1.wav");
   }
 
   override public function update():Void {
     cameraObject.x = (FlxG.mouse.x + player.x*3)/4;
     cameraObject.y = (FlxG.mouse.y + player.y*3)/4;
 
+    FlxG.collide(player, dungeon.collisionTilemap, function(a,b):Void { player.cancelDash(); });
     super.update();
     FlxG.collide(player, dungeon.collisionTilemap, function(a,b):Void { player.cancelDash(); });
+
+    FlxG.collide(G.projectiles, dungeon.wallTilemap, function(a,b):Void {
+      if(Std.is(a, ProjectileSprite)) a.onCollide();
+    });
+
+    dungeonObjects.sort(FlxSort.byY, FlxSort.ASCENDING);
+
   }
 }

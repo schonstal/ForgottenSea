@@ -17,7 +17,7 @@ class Reticle extends FlxSpriteGroup
 {
   var bigSprite:FlxSprite;
   var littleSprite:FlxSprite;
-
+  
   public function new() {
     super();
 
@@ -36,7 +36,15 @@ class Reticle extends FlxSpriteGroup
     add(littleSprite);
 
     blend = BlendMode.ADD;
+    activate();
+  }
+
+  public function activate():Void {
     alpha = 0.5;
+  }
+
+  public function deactivate():Void {
+    alpha = 0.1;
   }
 
   public override function update():Void {

@@ -23,7 +23,6 @@ class IsometricWalls
   var position:FlxPoint = new FlxPoint();
   var direction:FlxVector = new FlxVector(0,-1);
 
-
   /* Index on tilemap is bitwise or with presence of adjacent tiles on the cardinal directions
    * Starting with the least significant bit:
    * 0b0001 = 0x01 => A tile is present in the north
