@@ -123,7 +123,7 @@ class Player extends FlxSprite
       complete: function(t) {
         dashing = true;
         //TODO: Reduse, reuse, recycle
-        var p:Projectile = new Projectile(x,y);
+        var p:Projectile = Projectile.recycled(x,y);
         dungeonObjects.add(p);
         //FlxG.camera.shake(0.02, 0.1);
 
@@ -184,7 +184,7 @@ class Player extends FlxSprite
   private function onAnimate(name:String, frame:Int, frameIndex:Int):Void {
     if (name == "walk" || name == "walkBackwards") {
       if (frame == 0 || frame == 4) {
-        FlxG.sound.play("assets/sounds/footsteps/" + FlxRandom.intRanged(1,2) + ".wav");
+        FlxG.sound.play("assets/sounds/footsteps/" + FlxRandom.intRanged(1,2) + ".wav", 1);
       }
     }
   }
