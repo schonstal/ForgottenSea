@@ -15,6 +15,7 @@ import flixel.util.FlxPoint;
 class PlayState extends FlxState
 {
   private var player:Player;
+  private var reticle:Reticle;
   private var cameraObject:FlxObject;
   private var water:FlxSprite;
 
@@ -22,6 +23,7 @@ class PlayState extends FlxState
 
   override public function create():Void {
     super.create();
+    FlxG.mouse.visible = false;
     FlxG.debugger.drawDebug = true;
     FlxG.debugger.visible = true;
 
@@ -43,11 +45,17 @@ class PlayState extends FlxState
     cameraObject = new FlxObject();
     add(cameraObject);
 
+    reticle = new Reticle();
+    add(reticle);
+
     FlxG.camera.follow(cameraObject, FlxCamera.STYLE_LOCKON, new FlxPoint(-player.width/2,-player.height/2), 0);
 
     FlxG.worldBounds.width = FlxG.worldBounds.height = Dungeon.SIZE * 32;
     FlxG.worldBounds.x = dungeon.wallTilemap.x;
     FlxG.worldBounds.y = dungeon.wallTilemap.y;
+
+    //FlxG.sound.play("assets/music/seacave_music1.wav");
+    //FlxG.sound.play("assets/sounds/seacave_ambience1.wav");
   }
 
   override public function update():Void {
@@ -55,6 +63,6 @@ class PlayState extends FlxState
     cameraObject.y = (FlxG.mouse.y + player.y*3)/4;
 
     super.update();
-    FlxG.collide(player, dungeon.collisionTilemap);
+    FlxG.collide(player, dungeon.collisionTilemap, function(a,b):Void { player.cancelDash(); });
   }
 }

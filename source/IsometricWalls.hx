@@ -70,7 +70,6 @@ class IsometricWalls
       }
     }
 
-    //TODO: Cut out lakes
     cutLakes();
 
     //Find edges
@@ -87,6 +86,7 @@ class IsometricWalls
     for(j in 0...10) { 
       position.x = FlxRandom.intRanged(0, dungeonTiles.width - (BRUSH_SIZE + 1));
       position.y = FlxRandom.intRanged(0, dungeonTiles.height - (BRUSH_SIZE + 1));
+      if(outOfBounds()) changeDirection();
       for(i in 0...10) {
         position.x += direction.x;
         position.y += direction.y;
