@@ -10,6 +10,8 @@ import flixel.FlxObject;
 import flixel.FlxCamera;
 import flixel.group.FlxTypedGroup;
 
+import flixel.text.FlxText;
+
 import flixel.util.FlxRandom;
 import flixel.util.FlxPoint;
 import flixel.util.FlxSort;
@@ -37,6 +39,8 @@ class PlayState extends FlxState
   private var dungeonObjects:FlxTypedGroup<FlxObject>;
   private var projectiles:FlxTypedGroup<FlxObject>;
 
+  private var stageText:FlxText;
+
   private var playedSound:Bool = false;
 
   override public function create():Void {
@@ -49,7 +53,6 @@ class PlayState extends FlxState
     var water = new Water();
     water.x = -FlxG.width/2;
     water.y = -FlxG.height/2;
-    water.alpha = 0.2;
     water.scrollFactor.x = water.scrollFactor.y = 0.2;
     add(water);
 
@@ -61,14 +64,14 @@ class PlayState extends FlxState
     dungeonObjects = new FlxTypedGroup<FlxObject>();
     G.projectiles = new FlxTypedGroup<FlxObject>();
 
-    startPad = new FlxSprite(1);
-    startPad.makeGraphic(96, 96, 0x44ff00ff);
+    startPad = new FlxSprite();
+    startPad.loadGraphic("assets/images/spawn.png");
     add(startPad);
 
     spotlightSprite = new FlxSprite();
     spotlightSprite.loadGraphic("assets/images/spotlight.png");
     spotlightSprite.x = 28;
-    spotlightSprite.y = 62 - FlxG.height;
+    spotlightSprite.y = 62 - 480;
     spotlightSprite.blend = BlendMode.ADD;
     spotlightSprite.alpha = 0.25;
     add(spotlightSprite);
@@ -88,6 +91,14 @@ class PlayState extends FlxState
     spawnSprite.blend = BlendMode.ADD;
     spawnSprite.alpha = 0.25;
     add(spawnSprite);
+
+    stageText = new FlxText(0, FlxG.height/2-24, FlxG.width, "Seaside Caverns 1", 16);
+    stageText.alignment = "center";
+    stageText.scrollFactor.x = stageText.scrollFactor.y = 0;
+    stageText.alpha = 0;
+    stageText.color = 0xffd9ece0;
+    stageText.setBorderStyle(FlxText.BORDER_SHADOW, 0xff181d23, 2);
+    add(stageText);
 
     cameraObject = new FlxObject();
     add(cameraObject);
@@ -129,6 +140,11 @@ class PlayState extends FlxState
     if(!FlxG.overlap(player, startPad) && !playedSound) {
       FlxG.sound.play("assets/music/seacave_music1.wav", 0.9);
       playedSound = true;
+      FlxTween.tween(stageText, { alpha: 1 }, 1, { ease: FlxEase.quartOut, complete: function(t) {
+        new FlxTimer(1, function(t) {
+          FlxTween.tween(stageText, { alpha: 0 }, 1, { ease: FlxEase.quartOut });
+        });
+      }});
     }
 
     dungeonObjects.sort(FlxSort.byY, FlxSort.ASCENDING);
