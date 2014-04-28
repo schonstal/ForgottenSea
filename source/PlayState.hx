@@ -65,7 +65,7 @@ class PlayState extends FlxState
     FlxG.worldBounds.y = dungeon.wallTilemap.y;
 
     FlxG.sound.play("assets/music/seacave_music1.wav");
-    FlxG.sound.playMusic("assets/sounds/seacave_ambience1.wav");
+    FlxG.sound.playMusic("assets/sounds/seacave_ambience1.wav", 0.3);
   }
 
   override public function update():Void {
