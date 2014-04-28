@@ -21,7 +21,7 @@ class DungeonTiles
   public function new(width:Int, height:Int) {
     this.width = width;
     this.height = height;
-    position = new FlxPoint(width/2, height/2);
+    position = new FlxPoint(width/2-1, height/2);
     direction = new FlxVector(1,0);
 
     generateTiles();
@@ -41,7 +41,7 @@ class DungeonTiles
       position.y += direction.y;
 
       
-      var localSize = BRUSH_SIZE + (FlxRandom.chanceRoll(5) ? 1 : 0);
+      var localSize = BRUSH_SIZE + ((FlxRandom.chanceRoll(5) || i == 0) ? 1 : 0);
       for(x in 0...localSize) {
         for(y in 0...localSize) {
           var localY = Std.int(position.y) + y;
