@@ -48,6 +48,8 @@ class PlayState extends FlxState
     reticle = new Reticle();
     add(reticle);
 
+    add(new Projectile());
+
     FlxG.camera.follow(cameraObject, FlxCamera.STYLE_LOCKON, new FlxPoint(-player.width/2,-player.height/2), 0);
 
     FlxG.worldBounds.width = FlxG.worldBounds.height = Dungeon.SIZE * 32;
