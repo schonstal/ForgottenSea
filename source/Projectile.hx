@@ -30,9 +30,9 @@ class Projectile extends FlxSpriteGroup
     super(X,Y);
 
     shadow = new FlxSprite();
-    shadow.makeGraphic(20,10,0xff000000);
-    shadow.alpha = 0.5;
-    shadow.offset.x = -6;
+    shadow.loadGraphic("assets/images/player_magic_shadow.png");
+    shadow.offset.y = 3;
+    shadow.offset.x = 1;
     shadow.solid = false;
     add(shadow);
     
@@ -56,8 +56,8 @@ class Projectile extends FlxSpriteGroup
   }
 
   public function initialize(X:Float, Y:Float):Void {
-    x = 0;
-    y = 0;
+    x = X;
+    y = Y;
     projectile.x = X;
     projectile.y = Y;
     shadow.x = X;
@@ -115,6 +115,7 @@ class Projectile extends FlxSpriteGroup
     new FlxTimer().start(6.0/20.0, function(t) { exists = false; });
     projectile.exists = shadow.exists = false;
     FlxG.camera.shake(0.02, 0.3);
+    FlxG.sound.play("assets/sounds/orb_explode.wav");
   }
 
   public static function recycled(X:Float, Y:Float):Projectile {

@@ -32,6 +32,7 @@ class Player extends FlxSprite
   inline static var RECOIL_DURATION = 0.4;
 
   public var invulnerable:Bool = true;
+  public var started:Bool = false;
 
   var dashTween:VarTween;
   var dashScaleTween:VarTween;
@@ -64,6 +65,11 @@ class Player extends FlxSprite
   }
 
   public override function update():Void {
+    if(!started) {
+      super.update();
+      return;
+    }
+
     facing = FlxG.mouse.x < x + width/2 ? FlxObject.LEFT : FlxObject.RIGHT;
 
     if(!dashing) {
@@ -117,10 +123,12 @@ class Player extends FlxSprite
     if(shooting) return;
     reticle.deactivate();
     shooting = true;
+    FlxG.sound.play("assets/sounds/charge_orb.wav");
 
     dashScaleTween = FlxTween.tween(scale, { x: 0.7, y: 1.3 }, RECOIL_DURATION, {
       ease: FlxEase.quadOut,
       complete: function(t) {
+        FlxG.sound.play("assets/sounds/fire_orb.wav");
         dashing = true;
         //TODO: Reduse, reuse, recycle
         var p:Projectile = Projectile.recycled(x,y);
@@ -145,6 +153,7 @@ class Player extends FlxSprite
 
   private function startDash(direction:FlxVector):Void {
     if(shooting) return;
+    FlxG.sound.play("assets/sounds/dash.wav");
 
     velocity.x = velocity.y = 0;
     dashing = true;
