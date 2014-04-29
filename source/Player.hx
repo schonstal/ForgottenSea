@@ -66,6 +66,8 @@ class Player extends FlxSprite
 
   public override function update():Void {
     if(!started) {
+      velocity.x = velocity.y = 0;
+      animation.play("idle");
       super.update();
       return;
     }
@@ -123,7 +125,7 @@ class Player extends FlxSprite
     if(shooting) return;
     reticle.deactivate();
     shooting = true;
-    FlxG.sound.play("assets/sounds/charge_orb.wav");
+    FlxG.sound.play("assets/sounds/charge_orb.wav", 0.6);
 
     dashScaleTween = FlxTween.tween(scale, { x: 0.7, y: 1.3 }, RECOIL_DURATION, {
       ease: FlxEase.quadOut,
@@ -153,7 +155,7 @@ class Player extends FlxSprite
 
   private function startDash(direction:FlxVector):Void {
     if(shooting) return;
-    FlxG.sound.play("assets/sounds/dash.wav");
+    FlxG.sound.play("assets/sounds/dash.wav", 0.3);
 
     velocity.x = velocity.y = 0;
     dashing = true;
@@ -193,7 +195,7 @@ class Player extends FlxSprite
   private function onAnimate(name:String, frame:Int, frameIndex:Int):Void {
     if (name == "walk" || name == "walkBackwards") {
       if (frame == 0 || frame == 4) {
-        FlxG.sound.play("assets/sounds/footsteps/" + FlxRandom.intRanged(1,2) + ".wav", 1);
+        FlxG.sound.play("assets/sounds/footsteps/" + FlxRandom.intRanged(1,2) + ".wav", 0.3);
       }
     }
   }
