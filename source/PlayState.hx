@@ -33,11 +33,14 @@ class PlayState extends FlxState
   private var spawnSprite:FlxSprite;
   private var spotlightSprite:FlxSprite;
   private var startPad:FlxSprite;
+  private var exit:FlxSprite;
+  private var exitTarget:FlxObject;
 
   private var dungeon:Dungeon;
 
   private var dungeonObjects:FlxTypedGroup<FlxObject>;
   private var projectiles:FlxTypedGroup<FlxObject>;
+  private var torches:Torches;
 
   private var stageText:FlxText;
 
@@ -45,6 +48,9 @@ class PlayState extends FlxState
 
   override public function create():Void {
     super.create();
+    G.level++;
+    G.torchLocations = new Array<FlxPoint>();
+
     FlxG.camera.flash(0x181d23, 1);
     FlxG.mouse.visible = false;
     FlxG.debugger.drawDebug = true;
@@ -65,8 +71,29 @@ class PlayState extends FlxState
     G.projectiles = new FlxTypedGroup<FlxObject>();
 
     startPad = new FlxSprite();
-    startPad.loadGraphic("assets/images/spawn.png");
+    startPad.loadGraphic("assets/images/spawn.png", false, 96, 96);
+    startPad.animation.add("0", [0]);
+    startPad.animation.add("1", [1]);
+    startPad.animation.add("2", [2]);
+    startPad.animation.add("3", [3]);
+    startPad.animation.add("4", [3]);
     add(startPad);
+
+    exit = new FlxSprite();
+    exit.loadGraphic("assets/images/exit.png", false, 96, 96);
+    exit.blend = BlendMode.ADD;
+    exit.alpha = 0;
+    exit.x = 44;
+    exit.y = 54;
+    exit.width = exit.height = 8;
+    exit.offset.x = 44;
+    exit.offset.y = 54;
+    dungeonObjects.add(exit);
+
+    exitTarget = new FlxObject();
+    exitTarget.width = exitTarget.height = 2;
+    exitTarget.x = exitTarget.y = 47;
+    add(exitTarget);
 
     spotlightSprite = new FlxSprite();
     spotlightSprite.loadGraphic("assets/images/spotlight.png");
@@ -80,6 +107,9 @@ class PlayState extends FlxState
     player.x = 36;
     player.y = 0;
     dungeonObjects.add(player);
+
+    torches = new Torches(dungeonObjects);
+
     add(dungeonObjects);
 
     add(dungeon.wallTopTilemap);
@@ -92,7 +122,7 @@ class PlayState extends FlxState
     spawnSprite.alpha = 0.25;
     add(spawnSprite);
 
-    stageText = new FlxText(0, FlxG.height/2-24, FlxG.width, "Seaside Caverns 1", 16);
+    stageText = new FlxText(0, FlxG.height/2-24, FlxG.width, "Seaside Caverns " + G.level, 16);
     stageText.alignment = "center";
     stageText.scrollFactor.x = stageText.scrollFactor.y = 0;
     stageText.alpha = 0;
@@ -126,6 +156,26 @@ class PlayState extends FlxState
   }
 
   override public function update():Void {
+    if(FlxG.keys.justPressed.RIGHT) torches.lit++;
+
+    if(torches.lit >= 4) {
+      if(exit.alpha == 0) {
+        FlxTween.tween(exit, { alpha: 0.6 }, 0.5, { ease: FlxEase.quadOut, complete: function(t) {
+          FlxTween.tween(exit, { alpha: 0.4 }, 1, { ease: FlxEase.quadInOut, type: FlxTween.PINGPONG });
+        }});
+      }
+
+      if(FlxG.overlap(player, exitTarget)) {
+        exitTarget.solid = false;
+        player.started = false;
+        FlxG.camera.fade(0x181d23, 1, false, function() {
+          FlxG.switchState(new PlayState());
+        });
+      }
+
+    }
+
+    startPad.animation.play(""+torches.lit);
     cameraObject.x = (FlxG.mouse.x + player.x*3)/4;
     cameraObject.y = (FlxG.mouse.y + player.y*3)/4;
 
@@ -135,6 +185,11 @@ class PlayState extends FlxState
 
     FlxG.collide(G.projectiles, dungeon.wallTilemap, function(a,b):Void {
       if(Std.is(a, ProjectileSprite)) a.onCollide();
+    });
+
+    FlxG.collide(G.projectiles, torches, function(a,b):Void {
+      if(Std.is(a, ProjectileSprite)) a.onCollide();
+      if(Std.is(b, Torch)) b.onCollide();
     });
 
     if(!FlxG.overlap(player, startPad) && !playedSound) {

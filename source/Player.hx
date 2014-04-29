@@ -66,6 +66,8 @@ class Player extends FlxSprite
 
   public override function update():Void {
     if(!started) {
+      velocity.x = velocity.y = 0;
+      animation.play("idle");
       super.update();
       return;
     }
