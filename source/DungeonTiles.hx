@@ -72,7 +72,7 @@ class DungeonTiles
   }
 
   private function changeDirection():Void {
-    if (FlxRandom.chanceRoll(40) || outOfBounds()) {
+    if (FlxRandom.chanceRoll(30) || outOfBounds()) {
 
       direction.x = FlxRandom.intRanged(-1,1);
       direction.y = FlxRandom.intRanged(-1,1);

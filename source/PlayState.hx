@@ -23,6 +23,8 @@ import flixel.tweens.FlxTween;
 import flixel.tweens.FlxTween.TweenOptions;
 
 import flash.display.BlendMode;
+import flash.geom.Point;
+import flash.filters.ColorMatrixFilter;
 
 class PlayState extends FlxState
 {
@@ -50,6 +52,7 @@ class PlayState extends FlxState
     super.create();
     G.level++;
     G.torchLocations = new Array<FlxPoint>();
+    Projectile.init();
 
     FlxG.camera.flash(0x181d23, 1);
     FlxG.mouse.visible = false;
@@ -100,7 +103,7 @@ class PlayState extends FlxState
     spotlightSprite.x = 28;
     spotlightSprite.y = 62 - 480;
     spotlightSprite.blend = BlendMode.ADD;
-    spotlightSprite.alpha = 0.25;
+    spotlightSprite.alpha = 0.2;
     add(spotlightSprite);
 
     player = new Player(dungeonObjects, reticle);
@@ -119,7 +122,7 @@ class PlayState extends FlxState
     spawnSprite.x = spotlightSprite.x;
     spawnSprite.y = spotlightSprite.y;
     spawnSprite.blend = BlendMode.ADD;
-    spawnSprite.alpha = 0.25;
+    spawnSprite.alpha = 0.2;
     add(spawnSprite);
 
     stageText = new FlxText(0, FlxG.height/2-24, FlxG.width, "Seaside Caverns " + G.level, 16);
@@ -156,8 +159,6 @@ class PlayState extends FlxState
   }
 
   override public function update():Void {
-    if(FlxG.keys.justPressed.RIGHT) torches.lit++;
-
     if(torches.lit >= 4) {
       if(exit.alpha == 0) {
         FlxTween.tween(exit, { alpha: 0.6 }, 0.5, { ease: FlxEase.quadOut, complete: function(t) {
@@ -192,6 +193,9 @@ class PlayState extends FlxState
       if(Std.is(b, Torch)) b.onCollide();
     });
 
+    FlxG.collide(player, torches);
+
+    //TODO: Put this somewhere else
     if(!FlxG.overlap(player, startPad) && !playedSound) {
       FlxG.sound.play("assets/music/seacave_music1.wav", 0.9);
       playedSound = true;
@@ -200,9 +204,20 @@ class PlayState extends FlxState
           FlxTween.tween(stageText, { alpha: 0 }, 1, { ease: FlxEase.quartOut });
         });
       }});
+      FlxTween.tween(FlxG.camera, 
+                     { height: FlxG.height * 0.8, y: FlxG.height * 0.1 * FlxG.camera.zoom},
+                     1,
+                     { ease: FlxEase.quartOut, complete: function(t) {
+                         new FlxTimer(1, function(t) {
+                           FlxTween.tween(FlxG.camera,
+                                          { height: FlxG.height, y: 0 },
+                                          1,
+                                          { ease: FlxEase.quartOut });
+                         });
+                       }
+                     });
     }
 
     dungeonObjects.sort(FlxSort.byY, FlxSort.ASCENDING);
-
   }
 }

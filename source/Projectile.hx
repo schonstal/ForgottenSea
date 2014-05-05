@@ -130,4 +130,8 @@ class Projectile extends FlxSpriteGroup
     projectiles.push(projectile);
     return projectile;
   }
+
+  public static function init():Void {
+    projectiles = new Array<Projectile>();
+  }
 }
